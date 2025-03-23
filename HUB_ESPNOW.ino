@@ -2,18 +2,22 @@
 
 #include <esp_now.h>
 #include <WiFi.h>
-#include <DHT.h>
+#include "max6675.h"
 
-// DHT sensor configuration
-#define DHTPIN 4  
-#define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE);
+// MAX6675 sensor configuration
+int ktcSO = 21;
+int ktcCS = 23;
+int ktcCLK = 22;
+
+MAX6675 ktc(ktcCLK, ktcCS, ktcSO);
 
 int cycle = 0;
 int threshold = 35; // Default threshold value
 int threshintv = 0;
 unsigned long lastBroadcastTime = 0; // Stores the last time a broadcast was sent
 unsigned long delayDuration = 0; // Duration to wait before the next broadcast
+unsigned long lastTempRead = 0;
+float temperature = 0;
 
 struct Data {
   int ID;
@@ -33,10 +37,14 @@ void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 }
 
 void setup() {
-  Serial.begin(115200);       
-  dht.begin();               
+  Serial.begin(115200);
   Serial.println("ESP-NOW ESP Initialized");
   Serial2.begin(9600, SERIAL_8N1, 16, 17);
+
+  pinMode(ktcCS, OUTPUT);
+  digitalWrite(ktcCS, HIGH);
+
+  delay(500); // Give the MAX6675 time to stabilize
 
   // Initialize ESP-NOW
   WiFi.mode(WIFI_STA);
@@ -62,6 +70,17 @@ void setup() {
   }
 }
 
+void readTemperature() {
+  if (millis() - lastTempRead > 500) {  // Ensure reading occurs every 500ms
+    digitalWrite(ktcCS, LOW);
+    delay(10);
+    temperature = ktc.readCelsius();
+    digitalWrite(ktcCS, HIGH);
+    lastTempRead = millis();
+    //Serial.println(temperature);
+  }
+}
+
 void sendBroadcastAndUnicast(int cycleValue) {
   uint8_t broadcastMessage[1] = { (uint8_t)cycleValue };
   esp_now_send(panelbots, broadcastMessage, sizeof(broadcastMessage));
@@ -73,13 +92,14 @@ void sendBroadcastAndUnicast(int cycleValue) {
 }
 
 void loop() {
+  readTemperature();
+
   if (Serial2.available()) {
     Serial2.readBytes((uint8_t*)&received, sizeof(received));
 
     if (received.ID == 0) {
-      float temperature = dht.readTemperature();
-      if (isnan(temperature)) {
-        Serial.println("Failed to read from DHT sensor");
+      if (temperature < 0) {
+        Serial.println("Failed to read from MAX6675 sensor");
       } else {
         Serial2.println(temperature);  
         Serial.print("Temperature sent to Blynk ESP: "); 
@@ -111,8 +131,8 @@ void loop() {
   }
 
   // Periodically check the temperature against the threshold
-  float temperature = dht.readTemperature();
-  if (!isnan(temperature)) {
+  readTemperature();
+  if (temperature >= 0) {
     if (temperature > threshold && threshold != 0) {
       unsigned long currentMillis = millis();
       if (currentMillis - lastBroadcastTime >= delayDuration) {
@@ -132,6 +152,6 @@ void loop() {
       }
     }
   } else {
-    Serial.println("Failed to read from DHT sensor");
+    Serial.println("Failed to read from MAX6675 sensor");
   }
 }
