@@ -13,7 +13,7 @@
 // Variables for motor state and timing
 bool motorRunning = false;
 unsigned long lastActionTime = 0;
-unsigned long timeoutPeriod = 10000; // 10-second timeout
+unsigned long timeoutPeriod = 30000; // 10-second timeout
 
 int currentCycle = 0; // Current cycle count
 int totalCycles = 0;  // Total cycles to perform
