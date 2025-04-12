@@ -21,24 +21,24 @@ I made this project to clean the surface of solar panels to maintain efficiency 
 ## Code Structure
 This project consists of four main ESP32 programs:
 
-### 1. **Master Node Code 
+### 1. Master Node Code 
    - Connects to **Wi-Fi** and syncs time using **NTP**.
    - Communicates with **Blynk** for remote control.
    - Uses **ESP-NOW** to send control signals to slave nodes.
    - Handles scheduling logic for automated actions.
    - Supports manual triggering via **Blynk Virtual Pins**.
 
-### 2. **Slave Node Code 
+### 2. Slave Node Code 
    - Listens for commands from the **Master** via **ESP-NOW**.
    - Controls connected peripherals (motors, LEDs, relays, etc.).
    - Sends sensor data back to the Master for logging or further processing.
 
-### 3. **UART Communication Handler 
-   - Manages **serial communication** between ESP32 units.
+### 3. UART Communication Handler 
+   - Manages serial communication** between ESP32 units.
    - Transmits sensor data and receives control commands.
    - Used for temperature data retrieval and relay activation.
 
-### 4. **Blynk-Controlled Node 
+### 4. Blynk-Controlled Node 
    - Receives commands from the **Blynk app**.
    - Sends control signals to the **Master** for execution.
    - Handles remote data logging and device status updates.
