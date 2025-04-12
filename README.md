@@ -34,7 +34,7 @@ This project consists of four main ESP32 programs:
    - Sends sensor data back to the Master for logging or further processing.
 
 ### 3. UART Communication Handler 
-   - Manages serial communication** between ESP32 units.
+   - Manages serial communication between ESP32 units.
    - Transmits sensor data and receives control commands.
    - Used for temperature data retrieval and relay activation.
 
