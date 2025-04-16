@@ -13,19 +13,19 @@ void onDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
 
     // Set motor duration based on the value of d
     if (d == 0 || d == 1) {
-      duration = 10;
-    } else if (d == 2) {
       duration = 20;
+    } else if (d == 2) {
+      duration = 40;
     } else if (d == 3) {
       duration = 30;
     } else if (d == 4) {
-      duration = 40;
+      duration = 60;
     } else {
-      duration = 50;
+      duration = 60;
     }
 
     // Start motor and LED
-    digitalWrite(Motor, HIGH);
+    digitalWrite(Motor, LOW);
     digitalWrite(LED, HIGH);
     On = true;
     TurnoffTime = millis() + (duration * 1000);  // Set turn-off time
@@ -38,6 +38,7 @@ void setup() {
   pinMode(Motor, OUTPUT);
   pinMode(LED, OUTPUT);
   WiFi.mode(WIFI_STA);
+  digitalWrite(Motor, HIGH);
 
   if (esp_now_init() != 0) {
     Serial.println("Error initializing ESP-NOW");
@@ -50,7 +51,7 @@ void setup() {
 
 void loop() {
   if (On && millis() > TurnoffTime) {
-    digitalWrite(Motor, LOW);
+    digitalWrite(Motor, HIGH);
     digitalWrite(LED, LOW);  // Turn LED OFF
     On = false;
   }
