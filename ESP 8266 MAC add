@@ -1,0 +1,14 @@
+#include <ESP8266WiFi.h>
+
+void setup() {
+  Serial.begin(115200);  // Start serial communication at 115200 baud
+  WiFi.mode(WIFI_STA);   // Set WiFi mode to station (client)
+  
+  // Get and print MAC address
+  Serial.println("ESP8266 MAC Address: ");
+  Serial.println(WiFi.macAddress());
+}
+
+void loop() {
+  // Nothing needed here
+}
