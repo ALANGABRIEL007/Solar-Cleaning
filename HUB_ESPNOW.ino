@@ -29,7 +29,7 @@ Data received;
 
 // ESP-NOW addresses
 uint8_t panelbots[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; 
-uint8_t pump[] = {0x08, 0xF9, 0xE0, 0x6C, 0x4B, 0x07};  
+uint8_t pump[] = {0x08, 0xF9, 0xE0, 0x6C, 0x4B, 0x07};  // esp's mac add
 
 void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("ESP-NOW Send Status: ");
